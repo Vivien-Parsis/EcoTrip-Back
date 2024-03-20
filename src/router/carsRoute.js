@@ -1,6 +1,6 @@
 const router = require('express').Router()
-const { car } = require('./../middleware/db')
-
+const { car } = require('../middleware/db')
+//Read
 router.get("/get/:id?", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id){
@@ -13,7 +13,8 @@ router.get("/get/:id?", async (req, res) => {
         })
     }
 })
-router.post("/add", async (req, res) => {
+//Create
+router.post("/create", async (req, res) => {
     const currentCar = {
         modele : req.body.modele ? req.body.modele : "",
         capacite : req.body.capacite ? req.body.capacite : 0,
@@ -25,7 +26,7 @@ router.post("/add", async (req, res) => {
     await car.insertMany([currentCar])
     res.send(currentCar)
 })
-
+//Delete
 router.post("/:id/delete", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id.trim()==""){
@@ -34,7 +35,7 @@ router.post("/:id/delete", async (req, res) => {
     await car.findOneAndDelete({ _id: id });
     res.send(id)
 })
-
+//Update
 router.post("/:id/update", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const updatedCar = {
