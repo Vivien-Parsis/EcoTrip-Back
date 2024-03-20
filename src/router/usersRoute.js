@@ -21,7 +21,7 @@ router.post("/create", async (req, res) => {
         prenom: req.body.prenom ? req.body.prenom : "",
         email: req.body.email ? req.body.email : "",
         photo: req.body.photo ? req.body.photo : "",
-        vehicules: req.body.vehicules ? req.body.vehicules : null,
+        vehicules: req.body.vehicules ? new mongoose.Types.ObjectId(req.body.vehicules) : null,
         motDePasse: req.body.motDePasse ? crypto.createHash('sha256').update(req.body.motDePasse).digest("base64") : "",
         score: req.body.score ? req.body.score : "",
     }
@@ -54,7 +54,7 @@ router.post("/:id/update", async (req, res) => {
         prenom: req.body.prenom ? req.body.prenom : "",
         email: req.body.email ? req.body.email : "",
         photo: req.body.photo ? req.body.photo : "",
-        vehicules: req.body.vehicules ? req.body.vehicules : null,
+        vehicules: req.body.vehicules ? new mongoose.Types.ObjectId(req.body.vehicules) : null,
         motDePasse: req.body.motDePasse ? req.body.motDePasse : "",
         score: req.body.score ? req.body.score : "",
     }

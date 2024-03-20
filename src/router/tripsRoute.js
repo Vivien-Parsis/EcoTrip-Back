@@ -1,8 +1,9 @@
 const router = require('express').Router()
+const mongoose = require('mongoose')
 const { trip } = require('../middleware/db')
 //Read
 router.get("/get/:id?", async (req, res) => {
-    const id = req.params.id ? req.params.id : ""
+    const id = req.body.id ? req.body.id : ""
     if(id){
         trip.findOne({_id:id}).then((trip)=>{
             res.send(trip)
@@ -16,15 +17,16 @@ router.get("/get/:id?", async (req, res) => {
 //Create
 router.post("/create", async (req, res) => {
     const currenttrip = {
-        debut: req.params.debut ? req.params.debut : "",
-        fin: req.params.fin ? req.params.fin : "",
-        distance: req.params.distance ? req.params.distance : "",
-        conducteurs: req.params.conducteurs ? req.params.conducteurs : "",
-        lieuDepart: req.params.lieuDepart ? req.params.lieuDepart : "",
-        lieuFin: req.params.lieuFin ? req.params.lieuFin : "",
+        debut: req.body.debut ? req.body.debut : "",
+        fin: req.body.fin ? req.body.fin : "",
+        distance: req.body.distance ? req.body.distance : "",
+        conducteurs: req.body.conducteurs ? new mongoose.Types.ObjectId(req.body.conducteurs) : null,
+        lieuDepart: req.body.lieuDepart ? req.body.lieuDepart : "",
+        lieuFin: req.body.lieuFin ? req.body.lieuFin : "",
         passagers: [],
     }
-    if(currenttrip.debut.trim()==""||currenttrip.fin.trim()==""||currenttrip.distance.trim()==""||currenttrip.conducteurs.trim()==""||currenttrip.lieuDepart.trim()==""||currenttrip.lieuFin.trim()==""){
+    console.log(currenttrip)
+    if(currenttrip.debut.trim()==""||currenttrip.fin.trim()==""||currenttrip.distance.trim()==""||!currenttrip.conducteurs||currenttrip.lieuDepart.trim()==""||currenttrip.lieuFin.trim()==""){
         return res.send("incorrect format")
     }
     await trip.insertMany([currenttrip])
@@ -43,15 +45,15 @@ router.post("/:id/delete", async (req, res) => {
 router.post("/:id/update", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const updatedtrip = {
-        debut: req.params.debut ? req.params.debut : "",
-        fin: req.params.fin ? req.params.fin : "",
-        distance: req.params.distance ? req.params.distance : "",
-        conducteurs: req.params.conducteurs ? req.params.conducteurs : "",
-        lieuDepart: req.params.lieuDepart ? req.params.lieuDepart : "",
-        lieuFin: req.params.lieuFin ? req.params.lieuFin : "",
-        passagers: req.params.passagers ? req.params.passagers : "",
+        debut: req.body.debut ? req.body.debut : "",
+        fin: req.body.fin ? req.body.fin : "",
+        distance: req.body.distance ? req.body.distance : "",
+        conducteurs: req.body.conducteurs ? new mongoose.Types.ObjectId(req.body.conducteurs) : null,
+        lieuDepart: req.body.lieuDepart ? req.body.lieuDepart : "",
+        lieuFin: req.body.lieuFin ? req.body.lieuFin : "",
+        passagers: req.body.passagers ? req.body.passagers : "",
     }
-    if(currenttrip.debut.trim()==""||currenttrip.fin.trim()==""||currenttrip.distance.trim()==""||currenttrip.conducteurs.trim()==""||currenttrip.lieuDepart.trim()==""||currenttrip.lieuFin.trim()==""){
+    if(currenttrip.debut.trim()==""||currenttrip.fin.trim()==""||currenttrip.distance.trim()==""||currenttrip.conducteurs||currenttrip.lieuDepart.trim()==""||currenttrip.lieuFin.trim()==""){
         return res.send("incorrect format")
     }
     await trip.findOneAndUpdate({ _id: id }, updatedtrip);
