@@ -1,5 +1,3 @@
 node_modules
 private
-package-lock.json
-package.json
 .vscode
