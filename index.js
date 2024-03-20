@@ -12,6 +12,6 @@ app.use('/car', carRouter)
 app.use('/user', userRouter)
 app.use('/trip', tripRouter)
 //listen
-app.listen(port, () =>{
+app.listen({ host: host, port: port }, () =>{
     console.log(`This server is listen on http://${host}:${port}`);
 })
