@@ -8,6 +8,7 @@ const { host, port } = require("./src/const/config")
 //plugin
 app.use(express.json())
 //route
+app.get('/', (req, res)=>{res.send("eco-trip")})
 app.use('/car', carRouter)
 app.use('/user', userRouter)
 app.use('/trip', tripRouter)
