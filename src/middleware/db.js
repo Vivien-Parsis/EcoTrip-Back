@@ -7,11 +7,11 @@ const trip = null
 const initDB = async () => {
         const connection = mongoose.createConnection()
         await mongoose.connect(db_url);
-        car = mongoose.model('cars', {
+        await car = mongoose.model('cars', {
                 modele: { type: String, required: true },
                 capacite: { type: Number, required: true },
                 energie: { type: String, required: true }})
-        user = mongoose.model('users',{
+        await user = mongoose.model('users',{
             nom: { type: String, required: true },
             prenom: { type: String, required: true },
             email: { type: String, required: true, unique: true },
@@ -19,7 +19,7 @@ const initDB = async () => {
             vehicules: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Voiture' }],
             motDePasse: { type: String, required: true },
             score: { type: Number, default: 0 }})
-        trip = mongoose.model('trips',{
+        await trip = mongoose.model('trips',{
             debut: { type: Date, required: true },
             fin: { type: Date, required: true },
             distance: { type: Number, required: true },
