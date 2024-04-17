@@ -1,16 +1,16 @@
 const userRouter = require('express').Router()
 const crypto = require("node:crypto")
 const { user } = require('../middleware/db')
-const { isValidEmail } = require('../controller/validator')
+const { isValidEmail, validatePassword } = require('../controller/validator')
 //Read
 userRouter.get("/get/:id?", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id){
-        user.findOne({_id:id}).then((user)=>{
+        await user.findOne({_id:id}).then((user)=>{
             res.send(user)
         })
     }else{
-        user.find().then((users) => {
+        await user.find().then((users) => {
             res.send(users)
         })
     }
@@ -22,9 +22,6 @@ userRouter.post("/signin", async (req, res) => {
     }
     if(currentUser.email.trim()=="" || currentUser.motDePasse.trim()=="" ){
         return res.status(400).send({message:"incorrect format user"})
-    }
-    if(!isValidEmail(currentUser.email)){
-        return res.status(400).send({message:"incorrect mail format"})
     }
     user.findOne({email:currentUser.email, motDePasse:currentUser.motDePasse}).then(
         data => {
@@ -50,7 +47,13 @@ userRouter.post("/signup", async (req, res) => {
     if(currentuser.nom.trim()=="" ||currentuser.prenom.trim()=="" || currentuser.email.trim()=="" ||currentuser.motDePasse.trim()=="" ){
         return res.status(400).send("incorrect format user")
     }
-    user.find({email:req.body.email}).then((users)=>{
+    if(!isValidEmail(currentuser.email)){
+        return res.status(400).send({message:"incorrect mail format"})
+    }
+    if(validatePassword(req.body.motDePasse)!=null){
+        return res.status(400).send({message:validatePassword(req.body.motDePasse)})
+    }
+    await user.find({email:req.body.email}).then((users)=>{
         if(users.length==0){
             user.insertMany([currentuser])
             res.send(currentuser)
