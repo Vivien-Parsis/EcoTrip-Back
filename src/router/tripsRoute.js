@@ -1,7 +1,7 @@
 const tripRouter = require('express').Router()
 const mongoose = require('mongoose')
 const { trip, user, car } = require('../middleware/db')
-const { calculateScoreTrajet } = require('../tool/score')
+const { calculateScoreTrajet } = require('../controller/score')
 //Read
 tripRouter.get("/get/:id?", async (req, res) => {
     const id = req.body.id ? req.body.id : ""
