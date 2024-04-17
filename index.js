@@ -8,14 +8,14 @@ const { host, port } = require("./src/const/config")
 //plugin
 app.use(express.json())
 //route
-app.get('/', (req, res)=>{res.send("eco-trip")})
+app.get('/', (req, res) => { res.send("eco-trip") })
 app.use('/car', carsRouter)
 app.use('/user', userRouter)
 app.use('/trip', tripRouter)
-app.use((req, res, next)=>{
-    return res.status(404).send({"message":"page not found"})
+app.use((req, res, next) => {
+    return res.status(404).send({ "message": "page not found" })
 })
 //listen
-app.listen({ host: host, port: port }, () =>{
+app.listen({ host: host, port: port }, () => {
     console.log(`This server is listen on http://${host}:${port}`);
 })
