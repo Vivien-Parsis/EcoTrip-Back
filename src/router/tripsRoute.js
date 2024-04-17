@@ -28,18 +28,18 @@ tripRouter.post("/create", async (req, res) => {
     }
     console.log(currenttrip)
     if (currenttrip.debut.trim() == "" || currenttrip.fin.trim() == "" || currenttrip.distance.trim() == "" || !currenttrip.conducteurs || currenttrip.lieuDepart.trim() == "" || currenttrip.lieuFin.trim() == "") {
-        return res.send("incorrect format")
+        return res.status(400).send("incorrect format")
     }
     user.findOne({ _id: req.body.conducteurs }).then(
         data => {
             if (!data) {
-                return res.send({ "message": "driver not found" })
+                return res.status(400).send({ "message": "driver not found" })
             }
             if (data.vehicules != null) {
                 trip.insertMany([currenttrip]).then()
                 return res.send(currenttrip)
             } else {
-                return res.send({ "message": "not a driver" })
+                return res.status(400).send({ "message": "not a driver" })
             }
         }
     )
@@ -49,36 +49,36 @@ tripRouter.post("/passenger/add/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const passenger = req.body.passenger ? req.body.passenger : ""
     if (id.trim() == "" || !passenger) {
-        return res.send({ "message": "missing argument" })
+        return res.status(400).send({ "message": "missing argument" })
     }
     trip.findOne({ _id: id }).then(
         currentTrip => {
             if (!currentTrip) {
-                return res.send({ "message": "trip not found" })
+                return res.status(400).send({ "message": "trip not found" })
             }
             user.findOne({ _id: currentTrip.conducteurs }).then(
                 conducteur => {
                     if (!conducteur) {
-                        return res.send({ "message": "driver not found" })
+                        return res.status(400).send({ "message": "driver not found" })
                     }
                     car.findOne({ _id: conducteur.vehicules }).then(
                         voiture => {
                             if (!voiture) {
-                                return res.send({ "message": "car not found" })
+                                return res.status(400).send({ "message": "car not found" })
                             }
                             if (currentTrip.passagers.length == voiture.capacite) {
-                                return res.send({ "message": "car is full" })
+                                return res.status(400).send({ "message": "car is full" })
                             }
                             user.findOne({ _id: req.body.passenger }).then(
                                 passager => {
                                     if (!passager) {
-                                        return res.send({ "message": "passenger not found" })
+                                        return res.status(400).send({ "message": "passenger not found" })
                                     }
                                     if(req.body.passenger==currentTrip.conducteurs){
-                                        return res.send({ "message": "can't add driver to passenger" })
+                                        return res.status(400).send({ "message": "can't add driver to passenger" })
                                     }
                                     if(currentTrip.passagers.includes(passenger)){
-                                        return res.send({ "message": "passenger already in" })
+                                        return res.status(400).send({ "message": "passenger already in" })
                                     }
                                     currentTrip.passagers.push(passenger)
                                     trip.findOneAndUpdate({ _id: id }, { passagers: currentTrip.passagers }).then(
@@ -107,30 +107,30 @@ tripRouter.post("/passenger/remove/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const passenger = req.body.passenger ? req.body.passenger : ""
     if (id.trim() == "" || !passenger) {
-        return res.send({ "message": "missing argument" })
+        return res.status(400).send({ "message": "missing argument" })
     }
     trip.findOne({ _id: id }).then(
         currentTrip => {
             if (!currentTrip) {
-                return res.send({ "message": "trip not found" })
+                return res.status(400).send({ "message": "trip not found" })
             }
             user.findOne({ _id: currentTrip.conducteurs }).then(
                 conducteur => {
                     if (!conducteur) {
-                        return res.send({ "message": "driver not found" })
+                        return res.status(400).send({ "message": "driver not found" })
                     }
                     car.findOne({ _id: conducteur.vehicules }).then(
                         voiture => {
                             if (!voiture) {
-                                return res.send({ "message": "car not found" })
+                                return res.status(400).send({ "message": "car not found" })
                             }
                             user.findOne({ _id: req.body.passenger }).then(
                                 passager => {
                                     if (!passager) {
-                                        return res.send({ "message": "passenger not found" })
+                                        return res.status(400).send({ "message": "passenger not found" })
                                     }
                                     if(req.body.passenger==currentTrip.conducteurs){
-                                        return res.send({ "message": "can't add driver to passenger" })
+                                        return res.status(400).send({ "message": "can't add driver to passenger" })
                                     }
                                     let newPassagersList = []
                                     for(let item of currentTrip.passagers){
@@ -156,7 +156,7 @@ tripRouter.post("/passenger/remove/:id", async (req, res) => {
                                             )
                                         }
                                     )
-                                    return res.send({ "message": "removed passenger" })
+                                    return res.status(400).send({ "message": "removed passenger" })
                                 }
                             )
                         }
@@ -170,7 +170,7 @@ tripRouter.post("/passenger/remove/:id", async (req, res) => {
 tripRouter.post("/delete/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if (id.trim() == "") {
-        return res.send("missing id")
+        return res.status(400).send("missing id")
     }
     await trip.findOneAndDelete({ _id: id });
     res.send(id)
@@ -188,7 +188,7 @@ tripRouter.post("/update/:id", async (req, res) => {
     trip.findOne({ _id : id }).then(
         currentTrip => {
             if(!currentTrip){
-                return res.send({ "message": "trip not found" })
+                return res.status(400).send({ "message": "trip not found" })
             }
             let newTrip = {}
             newTrip.debut = bodyData.debut ? bodyData.debut : currentTrip.debut
@@ -199,7 +199,7 @@ tripRouter.post("/update/:id", async (req, res) => {
             trip.findOneAndUpdate({ _id: id }, {debut:newTrip.debut, fin:newTrip.fin, distance:newTrip.distance, lieuDepart:newTrip.lieuDepart, lieuFin:newTrip.lieuFin}).then(
                 data => {
                     if(!data){
-                        return res.send({ "message": "trip not found" })
+                        return res.status(400).send({ "message": "trip not found" })
                     }
                     return res.send(newTrip)
                 }

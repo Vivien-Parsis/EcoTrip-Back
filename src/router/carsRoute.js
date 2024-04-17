@@ -23,7 +23,7 @@ carsRouter.post("/create", async (req, res) => {
         facteurEmision: req.body.facteurEmision ? req.body.facteurEmision : ""
     }
     if (currentCar.modele.trim() == "" || currentCar.capacite == 0 || currentCar.energie.trim() == "") {
-        return res.send("incorrect format car")
+        return res.status(400).send({message:"incorrect format car"})
     }
     await car.insertMany([currentCar])
     res.send(currentCar)
@@ -32,7 +32,7 @@ carsRouter.post("/create", async (req, res) => {
 carsRouter.post("/delete/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if (id.trim() == "") {
-        return res.send("missing id")
+        return res.status(400).send({message:"missing id"})
     }
     await car.findOneAndDelete({ _id: id });
     res.send(id)
@@ -50,7 +50,7 @@ carsRouter.post("/update/:id", async (req, res) => {
     user.findOne({ _id: id }).then(
         currentCar => {
             if (!currentCar) {
-                return res.send({ "message": "user not found" })
+                return res.status(400).send({ "message": "user not found" })
             }
             let UpdatedCar = {}
             UpdatedCar.modele = bodyData.modele ? bodyData.modele : currentCar.modele
@@ -61,9 +61,9 @@ carsRouter.post("/update/:id", async (req, res) => {
             user.findOneAndUpdate({ _id: id }, { modele: UpdatedCar.modele, capacite: UpdatedCar.capacite, energie: UpdatedCar.energie, consoLitreParCentKm: UpdatedCar.consoLitreParCentKm, facteurEmision: UpdatedCar.facteurEmision }).then(
                 data => {
                     if (!data) {
-                        return res.send({ "message": "user not found" })
+                        return res.status(400).send({ "message": "user not found" })
                     }
-                    return res.send(UpdatedCar)
+                    return res.status(400).send(UpdatedCar)
                 }
             )
         }

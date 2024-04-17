@@ -20,13 +20,13 @@ userRouter.post("/signin", async (req, res) => {
         motDePasse: req.body.motDePasse ? crypto.createHash('sha256').update(req.body.motDePasse).digest("base64") : ""
     }
     if(currentUser.email.trim()=="" || currentUser.motDePasse.trim()=="" ){
-        return res.send("incorrect format user")
+        return res.status(400).send({message:"incorrect format user"})
     }
     user.findOne({email:currentUser.email, motDePasse:currentUser.motDePasse}).then(
         data => {
             console.log(data)
             if(!data){
-                return res.send({message:"user not found"})
+                return res.status(400).send({message:"user not found"})
             }
             return res.send(data)
         }
@@ -44,14 +44,14 @@ userRouter.post("/signup", async (req, res) => {
         score: 0
     }
     if(currentuser.nom.trim()=="" ||currentuser.prenom.trim()=="" || currentuser.email.trim()=="" ||currentuser.motDePasse.trim()=="" ){
-        return res.send("incorrect format user")
+        return res.status(400).send("incorrect format user")
     }
     user.find({email:req.body.email}).then((users)=>{
         if(users.length==0){
             user.insertMany([currentuser])
             res.send(currentuser)
         }else{
-            res.send("already exist")
+            res.status(400).send("already exist")
         }
     })
 })
@@ -59,7 +59,7 @@ userRouter.post("/signup", async (req, res) => {
 userRouter.post("/delete/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id.trim()==""){
-        return res.send("missing id")
+        return res.status(400).send("missing id")
     }
     await user.findOneAndDelete({ _id: id });
     res.send(id)
@@ -77,7 +77,7 @@ userRouter.post("/update/:id", async (req, res) => {
     user.findOne({ _id : id }).then(
         currentUser => {
             if(!currentUser){
-                return res.send({ "message": "user not found" })
+                return res.status(400).send({ "message": "user not found" })
             }
             let UpdatedUser = {}
             UpdatedUser.nom = bodyData.nom ? bodyData.nom : currentUser.nom
@@ -88,7 +88,7 @@ userRouter.post("/update/:id", async (req, res) => {
             user.findOneAndUpdate({ _id: id }, {nom:UpdatedUser.nom, prenom:UpdatedUser.prenom, email:UpdatedUser.email, photo:UpdatedUser.photo, vehicules:UpdatedUser.vehicules}).then(
                 data => {
                     if(!data){
-                        return res.send({ "message": "user not found" })
+                        return res.status(400).send({ "message": "user not found" })
                     }
                     return res.send(UpdatedUser)
                 }
