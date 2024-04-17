@@ -49,7 +49,7 @@ tripRouter.post("/addpassenger/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const passenger = req.body.passenger ? req.body.passenger : ""
     if (id.trim() == "" || !passenger) {
-        return res.send("missing id")
+        return res.send({ "message": "missing argument" })
     }
     trip.findOne({ _id: id }).then(
         currentTrip => {
@@ -64,7 +64,7 @@ tripRouter.post("/addpassenger/:id", async (req, res) => {
                     car.findOne({ _id: conducteur.vehicules }).then(
                         voiture => {
                             if (!voiture) {
-                                return res.send({ "message": "user not found" })
+                                return res.send({ "message": "car not found" })
                             }
                             if (currentTrip.passagers.length == voiture.capacite) {
                                 return res.send({ "message": "car is full" })
@@ -72,7 +72,10 @@ tripRouter.post("/addpassenger/:id", async (req, res) => {
                             user.findOne({ _id: req.body.passenger }).then(
                                 passager => {
                                     if (!passager) {
-                                        return res.send({ "message": "user not found" })
+                                        return res.send({ "message": "passenger not found" })
+                                    }
+                                    if(req.body.passenger==currentTrip.conducteurs){
+                                        return res.send({ "message": "can't add driver to passenger" })
                                     }
                                     currentTrip.passagers.push(passenger)
                                     console.log(currentTrip.passagers, id)
