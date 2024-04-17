@@ -22,3 +22,10 @@ API en express.js pour gerer le systeme de covoiturage de l'application Eco'trip
 ### Réquete pour récuperer tout les trajets
 
 `http://localhost:3000`
+
+## Auteur
+
+- Vivien PARSIS
+- Adel LÊ
+- Ben SHUM
+- Ariel AMZALLAG
