@@ -14,6 +14,23 @@ userRouter.get("/get/:id?", async (req, res) => {
         })
     }
 })
+userRouter.post("/signin", async (req, res) => {
+    const currentUser = {
+        email: req.body.email ? req.body.email : "",
+        motDePasse: req.body.motDePasse ? crypto.createHash('sha256').update(req.body.motDePasse).digest("base64") : ""
+    }
+    if(currentUser.email.trim()=="" || currentUser.motDePasse.trim()=="" ){
+        return res.send("incorrect format user")
+    }
+    user.find({email:currentUser.email, motDePasse:currentUser.motDePasse}).then(
+        data => {
+            if(!data){
+                return res.send({message:"user not found"})
+            }
+            return res.send(data)
+        }
+    )
+})
 //Create
 userRouter.post("/create", async (req, res) => {
     const currentuser = {
