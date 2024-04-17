@@ -25,8 +25,7 @@ userRouter.post("/signin", async (req, res) => {
     }
     user.findOne({ email: currentUser.email, motDePasse: currentUser.motDePasse }).then(
         data => {
-            console.log(data)
-            if (!data) {
+            if (!data) {    
                 return res.status(400).send({ message: "user not found" })
             }
             return res.send(data)

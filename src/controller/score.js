@@ -4,7 +4,7 @@ facteurEmision : Emission CO2(kg/km)
 consoLitreParCentKm : consomation litre carburant pour cent km
 */
 const calculateScoreTrajet = ( distance=0, facteurEmision=0, consoLitreParCentKm=0) => {
-    return (distance*100) / (consoLitreParCentKm*facteurEmision*distance)
+    return consoLitreParCentKm*facteurEmision*distance
 } 
 
 module.exports = { calculateScoreTrajet }

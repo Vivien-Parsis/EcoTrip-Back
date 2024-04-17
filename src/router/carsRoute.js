@@ -19,8 +19,8 @@ carsRouter.post("/create", async (req, res) => {
         modele: req.body.modele ? req.body.modele : "",
         capacite: req.body.capacite ? req.body.capacite : 0,
         energie: req.body.energie ? req.body.energie : "",
-        consoLitreParCentKm: req.body.consoLitreParCentKm ? req.body.consoLitreParCentKm : "",
-        facteurEmision: req.body.facteurEmision ? req.body.facteurEmision : ""
+        consoLitreParCentKm: req.body.consoLitreParCentKm ? req.body.consoLitreParCentKm : req.body.energie == "electrique" ? "0" : "10",
+        facteurEmision: req.body.facteurEmision ? req.body.facteurEmision : req.body.energie == "electrique" ? "0" : "100"
     }
     if (currentCar.modele.trim() == "" || currentCar.capacite == 0 || currentCar.energie.trim() == "") {
         return res.status(400).send({ message: "incorrect format car" })
