@@ -22,8 +22,9 @@ userRouter.post("/signin", async (req, res) => {
     if(currentUser.email.trim()=="" || currentUser.motDePasse.trim()=="" ){
         return res.send("incorrect format user")
     }
-    user.find({email:currentUser.email, motDePasse:currentUser.motDePasse}).then(
+    user.findOne({email:currentUser.email, motDePasse:currentUser.motDePasse}).then(
         data => {
+            console.log(data)
             if(!data){
                 return res.send({message:"user not found"})
             }
