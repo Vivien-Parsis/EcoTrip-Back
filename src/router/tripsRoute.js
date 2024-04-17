@@ -190,12 +190,13 @@ tripRouter.post("/update/:id", async (req, res) => {
             if(!currentTrip){
                 return res.status(400).send({ "message": "trip not found" })
             }
-            let newTrip = {}
-            newTrip.debut = bodyData.debut ? bodyData.debut : currentTrip.debut
-            newTrip.fin = bodyData.fin ? bodyData.fin : currentTrip.fin
-            newTrip.distance = bodyData.distance ? bodyData.distance : currentTrip.distance
-            newTrip.lieuDepart = bodyData.lieuDepart ? bodyData.lieuDepart : currentTrip.lieuDepart
-            newTrip.lieuFin = bodyData.lieuFin ? bodyData.lieuFin : currentTrip.lieuFin
+            let newTrip = {
+                debut : bodyData.debut ? bodyData.debut : currentTrip.debut,
+                fin : bodyData.fin ? bodyData.fin : currentTrip.fin,
+                distance : bodyData.distance ? bodyData.distance : currentTrip.distance,
+                lieuDepart : bodyData.lieuDepart ? bodyData.lieuDepart : currentTrip.lieuDepart,
+                lieuFin : bodyData.lieuFin ? bodyData.lieuFin : currentTrip.lieuFin
+            }
             trip.findOneAndUpdate({ _id: id }, {debut:newTrip.debut, fin:newTrip.fin, distance:newTrip.distance, lieuDepart:newTrip.lieuDepart, lieuFin:newTrip.lieuFin}).then(
                 data => {
                     if(!data){

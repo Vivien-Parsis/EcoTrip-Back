@@ -5,11 +5,11 @@ const { isValidEmail, validatePassword } = require('../controller/validator')
 //Read
 userRouter.get("/get/:id?", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
-    if(id){
-        await user.findOne({_id:id}).then((user)=>{
+    if (id) {
+        await user.findOne({ _id: id }).then((user) => {
             res.send(user)
         })
-    }else{
+    } else {
         await user.find().then((users) => {
             res.send(users)
         })
@@ -20,14 +20,14 @@ userRouter.post("/signin", async (req, res) => {
         email: req.body.email ? req.body.email : "",
         motDePasse: req.body.motDePasse ? crypto.createHash('sha256').update(req.body.motDePasse).digest("base64") : ""
     }
-    if(currentUser.email.trim()=="" || currentUser.motDePasse.trim()=="" ){
-        return res.status(400).send({message:"incorrect format user"})
+    if (currentUser.email.trim() == "" || currentUser.motDePasse.trim() == "") {
+        return res.status(400).send({ message: "incorrect format user" })
     }
-    user.findOne({email:currentUser.email, motDePasse:currentUser.motDePasse}).then(
+    user.findOne({ email: currentUser.email, motDePasse: currentUser.motDePasse }).then(
         data => {
             console.log(data)
-            if(!data){
-                return res.status(400).send({message:"user not found"})
+            if (!data) {
+                return res.status(400).send({ message: "user not found" })
             }
             return res.send(data)
         }
@@ -44,20 +44,20 @@ userRouter.post("/signup", async (req, res) => {
         vehicules: req.body.vehicules ? new mongoose.Types.ObjectId(req.body.vehicules) : null,//facultatif
         score: 0
     }
-    if(currentuser.nom.trim()=="" ||currentuser.prenom.trim()=="" || currentuser.email.trim()=="" ||currentuser.motDePasse.trim()=="" ){
+    if (currentuser.nom.trim() == "" || currentuser.prenom.trim() == "" || currentuser.email.trim() == "" || currentuser.motDePasse.trim() == "") {
         return res.status(400).send("incorrect format user")
     }
-    if(!isValidEmail(currentuser.email)){
-        return res.status(400).send({message:"incorrect mail format"})
+    if (!isValidEmail(currentuser.email)) {
+        return res.status(400).send({ message: "incorrect mail format" })
     }
-    if(validatePassword(req.body.motDePasse)!=null){
-        return res.status(400).send({message:validatePassword(req.body.motDePasse)})
+    if (validatePassword(req.body.motDePasse) != null) {
+        return res.status(400).send({ message: validatePassword(req.body.motDePasse) })
     }
-    await user.find({email:req.body.email}).then((users)=>{
-        if(users.length==0){
+    await user.find({ email: req.body.email }).then((users) => {
+        if (users.length == 0) {
             user.insertMany([currentuser])
             res.send(currentuser)
-        }else{
+        } else {
             res.status(400).send("already exist")
         }
     })
@@ -65,7 +65,7 @@ userRouter.post("/signup", async (req, res) => {
 //Delete
 userRouter.post("/delete/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
-    if(id.trim()==""){
+    if (id.trim() == "") {
         return res.status(400).send("missing id")
     }
     await user.findOneAndDelete({ _id: id });
@@ -81,20 +81,21 @@ userRouter.post("/update/:id", async (req, res) => {
         photo: req.body.photo ? req.body.photo : "",
         vehicules: req.body.vehicules ? req.body.vehicules : ""
     }
-    user.findOne({ _id : id }).then(
+    user.findOne({ _id: id }).then(
         currentUser => {
-            if(!currentUser){
+            if (!currentUser) {
                 return res.status(400).send({ "message": "user not found" })
             }
-            let UpdatedUser = {}
-            UpdatedUser.nom = bodyData.nom ? bodyData.nom : currentUser.nom
-            UpdatedUser.prenom = bodyData.prenom ? bodyData.prenom : currentUser.prenom
-            UpdatedUser.email = bodyData.email ? bodyData.email : currentUser.email
-            UpdatedUser.photo = bodyData.photo ? bodyData.photo : currentUser.photo
-            UpdatedUser.vehicules = bodyData.vehicules ? bodyData.vehicules : currentUser.vehicules
-            user.findOneAndUpdate({ _id: id }, {nom:UpdatedUser.nom, prenom:UpdatedUser.prenom, email:UpdatedUser.email, photo:UpdatedUser.photo, vehicules:UpdatedUser.vehicules}).then(
+            let UpdatedUser = {
+                nom: bodyData.nom ? bodyData.nom : currentUser.nom,
+                prenom: bodyData.prenom ? bodyData.prenom : currentUser.prenom,
+                email: bodyData.email ? bodyData.email : currentUser.email,
+                photo: bodyData.photo ? bodyData.photo : currentUser.photo,
+                vehicules: bodyData.vehicules ? bodyData.vehicules : currentUser.vehicules
+            }
+            user.findOneAndUpdate({ _id: id }, { nom: UpdatedUser.nom, prenom: UpdatedUser.prenom, email: UpdatedUser.email, photo: UpdatedUser.photo, vehicules: UpdatedUser.vehicules }).then(
                 data => {
-                    if(!data){
+                    if (!data) {
                         return res.status(400).send({ "message": "user not found" })
                     }
                     return res.send(UpdatedUser)
@@ -102,6 +103,6 @@ userRouter.post("/update/:id", async (req, res) => {
             )
         }
     )
-}) 
+})
 
 module.exports = { userRouter }
