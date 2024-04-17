@@ -45,7 +45,7 @@ tripRouter.post("/create", async (req, res) => {
     )
 })
 //add passenger
-tripRouter.post("/addpassenger/:id", async (req, res) => {
+tripRouter.post("/passenger/add/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const passenger = req.body.passenger ? req.body.passenger : ""
     if (id.trim() == "" || !passenger) {
@@ -77,8 +77,10 @@ tripRouter.post("/addpassenger/:id", async (req, res) => {
                                     if(req.body.passenger==currentTrip.conducteurs){
                                         return res.send({ "message": "can't add driver to passenger" })
                                     }
+                                    if(currentTrip.passagers.includes(passenger)){
+                                        return res.send({ "message": "passenger already in" })
+                                    }
                                     currentTrip.passagers.push(passenger)
-                                    console.log(currentTrip.passagers, id)
                                     trip.findOneAndUpdate({ _id: id }, { passagers: currentTrip.passagers }).then(
                                         () => {
                                             let newScore = passager.score + calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
@@ -91,6 +93,70 @@ tripRouter.post("/addpassenger/:id", async (req, res) => {
                                         }
                                     )
                                     return res.send({ "message": "added passenger" })
+                                }
+                            )
+                        }
+                    )
+                }
+            )
+        }
+    )
+})
+
+tripRouter.post("/passenger/remove/:id", async (req, res) => {
+    const id = req.params.id ? req.params.id : ""
+    const passenger = req.body.passenger ? req.body.passenger : ""
+    if (id.trim() == "" || !passenger) {
+        return res.send({ "message": "missing argument" })
+    }
+    trip.findOne({ _id: id }).then(
+        currentTrip => {
+            if (!currentTrip) {
+                return res.send({ "message": "trip not found" })
+            }
+            user.findOne({ _id: currentTrip.conducteurs }).then(
+                conducteur => {
+                    if (!conducteur) {
+                        return res.send({ "message": "driver not found" })
+                    }
+                    car.findOne({ _id: conducteur.vehicules }).then(
+                        voiture => {
+                            if (!voiture) {
+                                return res.send({ "message": "car not found" })
+                            }
+                            user.findOne({ _id: req.body.passenger }).then(
+                                passager => {
+                                    if (!passager) {
+                                        return res.send({ "message": "passenger not found" })
+                                    }
+                                    if(req.body.passenger==currentTrip.conducteurs){
+                                        return res.send({ "message": "can't add driver to passenger" })
+                                    }
+                                    let newPassagersList = []
+                                    for(let item of currentTrip.passagers){
+                                        console.log(item, passenger)
+                                        if(item!=passenger){
+                                            newPassagersList.push(item)
+                                        }
+                                    }
+                                    trip.findOneAndUpdate({ _id: id }, { passagers: newPassagersList }).then(
+                                        () => {
+                                            let newScore = passager.score - calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
+                                            if(newScore < 0){
+                                                newScore=0
+                                            }
+                                            user.findOneAndUpdate({ _id: passenger }, { score: newScore }).then(
+                                                () => {
+                                                    newScore = conducteur.score - calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
+                                                    if(newScore < 0){
+                                                        newScore=0
+                                                    }
+                                                    user.findOneAndUpdate({ _id: currentTrip.conducteurs }, { score: newScore }).then()
+                                                }
+                                            )
+                                        }
+                                    )
+                                    return res.send({ "message": "removed passenger" })
                                 }
                             )
                         }
