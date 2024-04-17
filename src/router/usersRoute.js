@@ -32,7 +32,7 @@ userRouter.post("/signin", async (req, res) => {
     )
 })
 //Create
-userRouter.post("/create", async (req, res) => {
+userRouter.post("/signup", async (req, res) => {
     const currentuser = {
         nom: req.body.nom ? req.body.nom : "",//obligatoire
         prenom: req.body.prenom ? req.body.prenom : "",//obligatoire
