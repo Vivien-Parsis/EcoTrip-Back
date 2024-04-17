@@ -1,11 +1,13 @@
 //import
 const express = require("express")
+const cors = require("cors")
 const app = express()
 const { carsRouter } = require("./src/router/carsRoute")
 const { userRouter } = require("./src/router/usersRoute")
 const { tripRouter } = require("./src/router/tripsRoute")
 const { host, port } = require("./src/const/config")
 //plugin
+app.use(cors)
 app.use(express.json())
 //route
 app.get('/', (req, res) => { res.send("eco-trip") })
