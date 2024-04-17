@@ -1,8 +1,8 @@
-const router = require('express').Router()
+const userRouter = require('express').Router()
 const crypto = require("node:crypto")
 const { user } = require('../middleware/db')
 //Read
-router.get("/get/:id?", async (req, res) => {
+userRouter.get("/get/:id?", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id){
         user.findOne({_id:id}).then((user)=>{
@@ -15,7 +15,7 @@ router.get("/get/:id?", async (req, res) => {
     }
 })
 //Create
-router.post("/create", async (req, res) => {
+userRouter.post("/create", async (req, res) => {
     const currentuser = {
         nom: req.body.nom ? req.body.nom : "",
         prenom: req.body.prenom ? req.body.prenom : "",
@@ -38,7 +38,7 @@ router.post("/create", async (req, res) => {
     })
 })
 //Delete
-router.post("/:id/delete", async (req, res) => {
+userRouter.post("/delete/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id.trim()==""){
         return res.send("missing id")
@@ -47,7 +47,7 @@ router.post("/:id/delete", async (req, res) => {
     res.send(id)
 })
 //Update
-router.post("/:id/update", async (req, res) => {
+userRouter.post("/update/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const updateduser = {
         nom: req.body.nom ? req.body.nom : "",
@@ -65,4 +65,4 @@ router.post("/:id/update", async (req, res) => {
     res.send(updateduser)
 }) 
 
-module.exports = router
+module.exports = { userRouter }

@@ -1,7 +1,7 @@
-const router = require('express').Router()
+const carsRouter = require('express').Router()
 const { car } = require('../middleware/db')
 //Read
-router.get("/get/:id?", async (req, res) => {
+carsRouter.get("/get/:id?", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id){
         car.findOne({_id:id}).then((car)=>{
@@ -14,11 +14,13 @@ router.get("/get/:id?", async (req, res) => {
     }
 })
 //Create
-router.post("/create", async (req, res) => {
+carsRouter.post("/create", async (req, res) => {
     const currentCar = {
         modele : req.body.modele ? req.body.modele : "",
         capacite : req.body.capacite ? req.body.capacite : 0,
-        energie : req.body.energie ? req.body.energie : ""
+        energie : req.body.energie ? req.body.energie : "",
+        consoLitreParCentKm : req.body.consoLitreParCentKm ? req.body.consoLitreParCentKm : "",
+        facteurEmision : req.body.facteurEmision ? req.body.facteurEmision : ""
     }
     if(currentCar.modele.trim()=="" || currentCar.capacite==0 || currentCar.energie.trim()==""){
         return res.send("incorrect format car")
@@ -27,7 +29,7 @@ router.post("/create", async (req, res) => {
     res.send(currentCar)
 })
 //Delete
-router.post("/:id/delete", async (req, res) => {
+carsRouter.post("/delete/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     if(id.trim()==""){
         return res.send("missing id")
@@ -36,7 +38,7 @@ router.post("/:id/delete", async (req, res) => {
     res.send(id)
 })
 //Update
-router.post("/:id/update", async (req, res) => {
+carsRouter.post("/update/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
     const updatedCar = {
         modele : req.body.modele ? req.body.modele : "",
@@ -50,4 +52,4 @@ router.post("/:id/update", async (req, res) => {
     res.send(updatedCar)
 }) 
 
-module.exports = router
+module.exports = { carsRouter }

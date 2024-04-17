@@ -9,6 +9,8 @@ const car = mongoose.model('cars', {
     modele: { type: String, required: true },
     capacite: { type: Number, required: true },
     energie: { type: String, required: true },
+    consoLitreParCentKm: { type: Number, require : false },
+    facteurEmision: { type: Number, require : false } // Emission CO2(kg/km)
 })
 
 const user = mongoose.model('users',{
@@ -25,7 +27,7 @@ const trip = mongoose.model('trips',{
     debut: { type: Date, required: true },
     fin: { type: Date, required: true },
     distance: { type: Number, required: true },
-    conducteurs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur' }],
+    conducteurs: { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur' },
     lieuDepart: String,
     lieuFin: String,
     passagers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur' }],

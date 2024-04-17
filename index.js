@@ -1,15 +1,15 @@
 //import
 const express = require("express")
 const app = express()
-const carRouter = require("./src/router/carsRoute")
-const userRouter = require("./src/router/usersRoute")
-const tripRouter = require("./src/router/tripsRoute")
+const { carsRouter } = require("./src/router/carsRoute")
+const { userRouter } = require("./src/router/usersRoute")
+const { tripRouter } = require("./src/router/tripsRoute")
 const { host, port } = require("./src/const/config")
 //plugin
 app.use(express.json())
 //route
 app.get('/', (req, res)=>{res.send("eco-trip")})
-app.use('/car', carRouter)
+app.use('/car', carsRouter)
 app.use('/user', userRouter)
 app.use('/trip', tripRouter)
 //listen
