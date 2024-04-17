@@ -85,7 +85,6 @@ tripRouter.post("/addpassenger/:id", async (req, res) => {
                                                     user.findOneAndUpdate({ _id: currentTrip.conducteurs }, { score: newScore }).then()
                                                 }
                                             )
-
                                         }
                                     )
                                     return res.send({ "message": "added passenger" })
@@ -110,20 +109,34 @@ tripRouter.post("/delete/:id", async (req, res) => {
 //Update
 tripRouter.post("/update/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
-    const updatedtrip = {
+    const bodyData = {
         debut: req.body.debut ? req.body.debut : "",
         fin: req.body.fin ? req.body.fin : "",
         distance: req.body.distance ? req.body.distance : "",
-        conducteurs: req.body.conducteurs ? new mongoose.Types.ObjectId(req.body.conducteurs) : null,
         lieuDepart: req.body.lieuDepart ? req.body.lieuDepart : "",
-        lieuFin: req.body.lieuFin ? req.body.lieuFin : "",
-        passagers: req.body.passagers ? req.body.passagers : "",
+        lieuFin: req.body.lieuFin ? req.body.lieuFin : ""
     }
-    if (currenttrip.debut.trim() == "" || currenttrip.fin.trim() == "" || currenttrip.distance.trim() == "" || currenttrip.conducteurs || currenttrip.lieuDepart.trim() == "" || currenttrip.lieuFin.trim() == "") {
-        return res.send("incorrect format")
-    }
-    await trip.findOneAndUpdate({ _id: id }, updatedtrip);
-    res.send(updatedtrip)
+    trip.findOne({ _id : id }).then(
+        currentTrip => {
+            if(!currentTrip){
+                return res.send({ "message": "trip not found" })
+            }
+            let newTrip = {}
+            newTrip.debut = bodyData.debut ? bodyData.debut : currentTrip.debut
+            newTrip.fin = bodyData.fin ? bodyData.fin : currentTrip.fin
+            newTrip.distance = bodyData.distance ? bodyData.distance : currentTrip.distance
+            newTrip.lieuDepart = bodyData.lieuDepart ? bodyData.lieuDepart : currentTrip.lieuDepart
+            newTrip.lieuFin = bodyData.lieuFin ? bodyData.lieuFin : currentTrip.lieuFin
+            trip.findOneAndUpdate({ _id: id }, {debut:newTrip.debut, fin:newTrip.fin, distance:newTrip.distance, lieuDepart:newTrip.lieuDepart, lieuFin:newTrip.lieuFin}).then(
+                data => {
+                    if(!data){
+                        return res.send({ "message": "trip not found" })
+                    }
+                    return res.send(newTrip)
+                }
+            )
+        }
+    )
 })
 
 module.exports = { tripRouter }

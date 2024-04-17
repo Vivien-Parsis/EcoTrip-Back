@@ -40,16 +40,34 @@ carsRouter.post("/delete/:id", async (req, res) => {
 //Update
 carsRouter.post("/update/:id", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
-    const updatedCar = {
-        modele : req.body.modele ? req.body.modele : "",
-        capacite : req.body.capacite ? req.body.capacite : 0,
-        energie : req.body.energie ? req.body.energie : ""
+    const bodyData = {
+        modele: req.body.modele ? req.body.modele : "",
+        capacite: req.body.capacite ? req.body.capacite : "",
+        energie: req.body.energie ? req.body.energie : "",
+        consoLitreParCentKm: req.body.consoLitreParCentKm ? req.body.consoLitreParCentKm : "",
+        facteurEmision: req.body.facteurEmision ? req.body.facteurEmision : ""
     }
-    if(updatedCar.modele.trim()=="" || updatedCar.capacite==0 || updatedCar.energie.trim()==""){
-        return res.send("incorrect format car")
-    }
-    await car.findOneAndUpdate({ _id: id }, updatedCar);
-    res.send(updatedCar)
+    user.findOne({ _id : id }).then(
+        currentCar => {
+            if(!currentCar){
+                return res.send({ "message": "user not found" })
+            }
+            let UpdatedCar = {}
+            UpdatedCar.modele = bodyData.modele ? bodyData.modele : currentCar.modele
+            UpdatedCar.capacite = bodyData.capacite ? bodyData.capacite : currentCar.capacite
+            UpdatedCar.energie = bodyData.energie ? bodyData.energie : currentCar.energie
+            UpdatedCar.consoLitreParCentKm = bodyData.consoLitreParCentKm ? bodyData.consoLitreParCentKm : currentCar.consoLitreParCentKm
+            UpdatedCar.facteurEmision = bodyData.facteurEmision ? bodyData.facteurEmision : currentCar.facteurEmision
+            user.findOneAndUpdate({ _id: id }, {modele:UpdatedCar.modele, capacite:UpdatedCar.capacite, energie:UpdatedCar.energie, consoLitreParCentKm:UpdatedCar.consoLitreParCentKm, facteurEmision:UpdatedCar.facteurEmision}).then(
+                data => {
+                    if(!data){
+                        return res.send({ "message": "user not found" })
+                    }
+                    return res.send(UpdatedCar)
+                }
+            )
+        }
+    )
 }) 
 
 module.exports = { carsRouter }
