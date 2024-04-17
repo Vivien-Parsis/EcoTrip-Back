@@ -1,6 +1,7 @@
 const userRouter = require('express').Router()
 const crypto = require("node:crypto")
 const { user } = require('../middleware/db')
+const { isValidEmail } = require('../controller/validator')
 //Read
 userRouter.get("/get/:id?", async (req, res) => {
     const id = req.params.id ? req.params.id : ""
@@ -21,6 +22,9 @@ userRouter.post("/signin", async (req, res) => {
     }
     if(currentUser.email.trim()=="" || currentUser.motDePasse.trim()=="" ){
         return res.status(400).send({message:"incorrect format user"})
+    }
+    if(!isValidEmail(currentUser.email)){
+        return res.status(400).send({message:"incorrect mail format"})
     }
     user.findOne({email:currentUser.email, motDePasse:currentUser.motDePasse}).then(
         data => {
