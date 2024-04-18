@@ -32,6 +32,39 @@ userRouter.post("/signin", async (req, res) => {
         }
     )
 })
+userRouter.post("/car/add", async (req, res) => {
+    const currentUser = {
+        email: req.body.email ? req.body.email : "",
+        motDePasse: req.body.motDePasse ? crypto.createHash('sha256').update(req.body.motDePasse).digest("base64") : "",
+        car : req.body.car ? req.body.car : "",
+    }
+    if (currentUser.email.trim() == "" || currentUser.motDePasse.trim() == "" || currentUser.car.trim()=="") {
+        return res.status(400).send({ message: "incorrect format user" })
+    }
+    user.findOne({ email: currentUser.email, motDePasse: currentUser.motDePasse }).then(
+        conducteur => {
+            if (!conducteur) {    
+                return res.status(400).send({ message: "user not found" })
+            }
+            car.findOne({ _id : currentUser.car }).then(
+                voiture => {
+                    if(!voiture){
+                        return res.status(400).send({ message: "car not found" })
+                    }
+                    user.findOneAndUpdate({ _id : conducteur._id }, { vehicules : currentUser.car }).then(
+                        data => {
+                            if (!data) {    
+                                return res.status(400).send({ message: "user not found" })
+                            }
+                            return res.send(data)
+                        }
+                    )
+                }
+            )
+            
+        }
+    )
+})
 //Create
 userRouter.post("/signup", async (req, res) => {
     const currentuser = {
@@ -40,7 +73,7 @@ userRouter.post("/signup", async (req, res) => {
         email: req.body.email ? req.body.email : "",//obligatoire
         motDePasse: req.body.motDePasse ? crypto.createHash('sha256').update(req.body.motDePasse).digest("base64") : "",//obligatoire
         photo: req.body.photo ? req.body.photo : "",//facultatif
-        vehicules: req.body.vehicules ? new mongoose.Types.ObjectId(req.body.vehicules) : null,//facultatif
+        vehicules: null,
         score: 0
     }
     if (currentuser.nom.trim() == "" || currentuser.prenom.trim() == "" || currentuser.email.trim() == "" || currentuser.motDePasse.trim() == "") {
