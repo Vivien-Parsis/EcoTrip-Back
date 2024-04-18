@@ -65,6 +65,30 @@ userRouter.post("/car/add", async (req, res) => {
         }
     )
 })
+userRouter.post("/trip/get", async (req, res) => {
+    const currentUser = {
+        email: req.body.email ? req.body.email : "",
+        motDePasse: req.body.motDePasse ? crypto.createHash('sha256').update(req.body.motDePasse).digest("base64") : ""
+    }
+    if (currentUser.email.trim() == "" || currentUser.motDePasse.trim() == "") {
+        return res.status(400).send({ message: "incorrect format user" })
+    }
+    user.findOne({ email: currentUser.email, motDePasse: currentUser.motDePasse }).then(
+        utilisateur => {
+            if (!utilisateur) {    
+                return res.status(400).send({ message: "user not found" })
+            }
+            trip.find({passagers : utilisateur._id}).then(
+                trips => {
+                    if(trips.length == 0){
+                        res.status(400).send({ message: "no trips found" })
+                    }
+                    return res.send(trips)
+                }
+            )
+        }
+    )
+})
 //Create
 userRouter.post("/signup", async (req, res) => {
     const currentuser = {
