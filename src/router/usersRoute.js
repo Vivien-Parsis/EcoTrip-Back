@@ -1,6 +1,6 @@
 const userRouter = require('express').Router()
 const crypto = require("node:crypto")
-const { user } = require('../middleware/db')
+const { user, trip, car } = require('../middleware/db')
 const { isValidEmail, validatePassword } = require('../controller/validator')
 
 userRouter.post("/signin", async (req, res) => {
