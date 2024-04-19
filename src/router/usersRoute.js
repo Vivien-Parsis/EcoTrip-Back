@@ -2,19 +2,7 @@ const userRouter = require('express').Router()
 const crypto = require("node:crypto")
 const { user } = require('../middleware/db')
 const { isValidEmail, validatePassword } = require('../controller/validator')
-//Read
-userRouter.get("/get/:id?", async (req, res) => {
-    const id = req.params.id ? req.params.id : ""
-    if (id) {
-        await user.findOne({ _id: id }).then((user) => {
-            res.send(user)
-        })
-    } else {
-        await user.find().then((users) => {
-            res.send(users)
-        })
-    }
-})
+
 userRouter.post("/signin", async (req, res) => {
     const currentUser = {
         email: req.body.email ? req.body.email : "",
