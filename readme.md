@@ -28,11 +28,9 @@ API en express.js pour gerer le systeme de covoiturage de l'application Eco'trip
 
 `http://localhost:3000`
 
-## Exemple d'utilisation
+## Route
 
-### Réquete pour récuperer tout les trajets
-
-`http://localhost:3000`
+[route disponible](/src/router/Router.md)
 
 ## Auteur
 
