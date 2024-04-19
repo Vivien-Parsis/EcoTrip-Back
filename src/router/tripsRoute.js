@@ -94,10 +94,10 @@ tripRouter.post("/passenger/add/:id", async (req, res) => {
                                     currentTrip.passagers.push(passenger)
                                     trip.findOneAndUpdate({ _id: id }, { passagers: currentTrip.passagers }).then(
                                         () => {
-                                            let newScore = passager.score - calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
+                                            let newScore = passager.score + calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
                                             user.findOneAndUpdate({ _id: passenger }, { score: newScore }).then(
                                                 () => {
-                                                    newScore = conducteur.score + calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
+                                                    newScore = conducteur.score - calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
                                                     user.findOneAndUpdate({ _id: currentTrip.conducteurs }, { score: newScore }).then()
                                                 }
                                             )
@@ -151,13 +151,13 @@ tripRouter.post("/passenger/remove/:id", async (req, res) => {
                                     }
                                     trip.findOneAndUpdate({ _id: id }, { passagers: newPassagersList }).then(
                                         () => {
-                                            let newScore = passager.score + calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
+                                            let newScore = passager.score - calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
                                             if (newScore < 0) {
                                                 newScore = 0
                                             }
                                             user.findOneAndUpdate({ _id: passenger }, { score: newScore }).then(
                                                 () => {
-                                                    newScore = conducteur.score - calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
+                                                    newScore = conducteur.score + calculateScoreTrajet(parseFloat(currentTrip.distance), parseFloat(voiture.facteurEmision), parseFloat(voiture.consoLitreParCentKm))
                                                     if (newScore < 0) {
                                                         newScore = 0
                                                     }
