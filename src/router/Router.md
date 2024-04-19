@@ -2,10 +2,6 @@
 
 ## User
 
-### recuperer les users
-
-GET `/user/get/:id?`
-
 ### se connecter
 
 POST `/user/signin`
